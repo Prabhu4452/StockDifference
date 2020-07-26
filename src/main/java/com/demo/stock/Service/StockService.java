@@ -2,6 +2,7 @@ package com.demo.stock.Service;
 
 import com.demo.stock.Domain.StockDto;
 import com.demo.stock.Domain.StockExchangeDto;
+import com.demo.stock.ExceptionHandler.StockException;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
@@ -15,6 +16,7 @@ import yahoofinance.YahooFinance;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URISyntaxException;
@@ -30,8 +32,14 @@ public class StockService {
 
 
     public Stock getCompleteStockFromYahoo(String comp) throws IOException {
-        Stock stock = YahooFinance.get(comp);
-        return stock;
+            Stock stock = YahooFinance.get(comp);
+            if(stock == null) {
+                throw new StockException("VALUE_NOT_FOUND", "The values you are searching aren't found for " + comp);
+            }
+            if(!stock.isValid()) {
+                throw new StockException("INVALID_COMPANY", "The values you are searching aren't valid " + comp);
+            }
+            return stock;
     }
 
     public List<StockExchangeDto> getStockFromYahooWithMappingToStockDto(String comp) throws IOException {
@@ -99,6 +107,9 @@ public class StockService {
         List<StockDto> stockDtoList;
         Map<String, Stock> stock = YahooFinance.get(comp.split(","));
         stockDtoList = stock.values().stream().map(stock1 -> toDto(stock1)).collect(Collectors.toList());
+        if(stockDtoList.size() < 2) {
+            throw new StockException("PROFIT_NOT_FOUND", "Please enter atleast two companies");
+        }
         BigDecimal profit = stockDtoList.get(0).getPrice().subtract(stockDtoList.get(1).getPrice());
         return profit;
     }

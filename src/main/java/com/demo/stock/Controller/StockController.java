@@ -2,6 +2,7 @@ package com.demo.stock.Controller;
 
 import com.demo.stock.Domain.StockDto;
 import com.demo.stock.Domain.StockExchangeDto;
+import com.demo.stock.ExceptionHandler.StockException;
 import com.demo.stock.Service.StockService;
 import com.itextpdf.text.DocumentException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +30,7 @@ public class StockController {
     StockService stockService;
 
     @GetMapping(value = "/yahoocompletestockdata")
-    public Stock getCompleteStockFromYahooService(@RequestParam String symbol) throws IOException {
+    public Stock getCompleteStockFromYahooService(@RequestParam String symbol) throws IOException, StockException {
         return stockService.getCompleteStockFromYahoo(symbol);
     }
 
