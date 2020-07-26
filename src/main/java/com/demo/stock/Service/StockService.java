@@ -19,6 +19,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.net.URISyntaxException;
 import java.util.*;
 import java.util.List;
@@ -110,8 +111,9 @@ public class StockService {
         if(stockDtoList.size() < 2) {
             throw new StockException("PROFIT_NOT_FOUND", "Please enter atleast two companies");
         }
-        BigDecimal profit = stockDtoList.get(0).getPrice().subtract(stockDtoList.get(1).getPrice());
-        return profit;
+        BigDecimal difference = stockDtoList.get(0).getPrice().subtract(stockDtoList.get(1).getPrice());
+        BigDecimal profit = new BigDecimal(String.valueOf(difference));
+        return profit.abs();
     }
 
 
@@ -140,7 +142,9 @@ public class StockService {
         stockExchangeDto.setName(key);
         stockExchangeDto.setNsePrice(detailMap[1]);
         stockExchangeDto.setBsePrice(detailMap[0]);
-        stockExchangeDto.setPotentialProfits(stockExchangeDto.getBsePrice().subtract(stockExchangeDto.getNsePrice()));
+        BigDecimal difference = stockExchangeDto.getBsePrice().subtract(stockExchangeDto.getNsePrice());
+        BigDecimal profit = new BigDecimal(String.valueOf(difference));
+        stockExchangeDto.setPotentialProfits(profit.abs());
         return stockExchangeDto;
     }
 
