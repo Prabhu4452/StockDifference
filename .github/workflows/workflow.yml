@@ -17,5 +17,5 @@ jobs:
           script: |
             mkdir test 
             cd test 
-            git clone https://github.com/Prabhu4452/StockDifference.git 
+            git clone git@github.com/Prabhu4452/StockDifference.git 
             echo 'Deployment successful to digital ocean' 
